@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronLeft, ChevronRight, X, FileText, Video } from "lucide-react";
+import { ChevronLeft, ChevronRight, X, FileText, Video, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -14,7 +14,13 @@ const mockPages = [
   {
     id: 1,
     title: "Introduction",
-    content: "Welcome to the comprehensive guide on this subject.",
+    content: `In my younger and more vulnerable years my father gave me some advice that I've been turning over in my mind ever since.
+
+"Whenever you feel like criticizing any one," he told me, "just remember that all the people in this world haven't had the advantages that you've had."
+
+He didn't say any more, but we've always been unusually communicative in a reserved way, and I understood that he meant a great deal more than that. In consequence, I'm inclined to reserve all judgements, a habit that has opened up many curious natures to me and also made me the victim of not a few veteran bores. The abnormal mind is quick to detect and attach itself to this quality when it appears in a normal person, and so it came about that in college I was unjustly accused of being a politician, because I was privy to the secret griefs of wild, unknown men.
+
+Most of the confidences were unsought — frequently I have feigned sleep, preoccupation, or a hostile levity when I realized by some unmistakable sign that an intimate revelation was quivering on the horizon; for the intimate revelations of young men, or at least the terms in which they express them, are usually plagiaristic and marred by obvious suppressions.`,
     resources: [
       { id: 1, type: "video", title: "Introduction Video", url: "https://www.youtube.com/embed/dQw4w9WgXcQ" },
       { id: 2, type: "pdf", title: "Chapter Overview", url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" },
@@ -23,7 +29,13 @@ const mockPages = [
   {
     id: 2,
     title: "Core Concepts",
-    content: "Let's explore the fundamental concepts of this subject.",
+    content: `Let's explore the fundamental concepts of this subject. Understanding the core principles is essential for mastering this field.
+
+The foundation of knowledge begins with understanding basic terminology and concepts. Each concept builds upon the previous one, creating a comprehensive framework for learning.
+
+As we delve deeper into the subject matter, you'll discover how these concepts interconnect and support one another. This interconnected web of knowledge forms the basis of expertise in this domain.
+
+Practice and application are key to truly grasping these concepts. Theory alone is insufficient; you must engage with the material actively to develop true understanding and competence.`,
     resources: [
       { id: 3, type: "video", title: "Core Concepts Explained", url: "https://www.youtube.com/embed/dQw4w9WgXcQ" },
     ],
@@ -31,7 +43,13 @@ const mockPages = [
   {
     id: 3,
     title: "Advanced Topics",
-    content: "Dive deeper into advanced topics and applications.",
+    content: `Dive deeper into advanced topics and applications. This chapter explores sophisticated concepts that build upon your foundational knowledge.
+
+Advanced learners will find these topics particularly engaging as they push the boundaries of conventional understanding. The complexity increases, but so does the reward of mastery.
+
+Real-world applications of these advanced concepts demonstrate their practical value. You'll see how theory translates into practice in professional settings.
+
+Critical thinking and analysis become paramount at this level. You're encouraged to question, explore, and develop your own insights as you progress through this material.`,
     resources: [
       { id: 4, type: "pdf", title: "Advanced Reading", url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" },
     ],
@@ -51,7 +69,8 @@ const mockAssessments = [
 const BookReader = ({ subject, onClose }: BookReaderProps) => {
   const [currentPage, setCurrentPage] = useState(0);
   const [selectedResource, setSelectedResource] = useState<any>(null);
-  const [rightPanelOpen, setRightPanelOpen] = useState(false);
+  const [showResources, setShowResources] = useState(false);
+  const [showLessonPlans, setShowLessonPlans] = useState(false);
 
   const page = mockPages[currentPage];
 
@@ -68,151 +87,226 @@ const BookReader = ({ subject, onClose }: BookReaderProps) => {
           >
             <X className="w-5 h-5" />
           </Button>
-          <h2 className="text-xl font-bold text-foreground">{subject} - Book</h2>
+          <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
+            <BookOpen className="w-5 h-5" />
+            {subject} - Book
+          </h2>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-4">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              setShowResources(!showResources);
+              setShowLessonPlans(false);
+            }}
+            className="flex items-center gap-2"
+          >
+            <Video className="w-4 h-4" />
+            Learning Resources
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              setShowLessonPlans(!showLessonPlans);
+              setShowResources(false);
+            }}
+            className="flex items-center gap-2"
+          >
+            <FileText className="w-4 h-4" />
+            Lesson Plans & Assessments
+          </Button>
           <span className="text-sm text-muted-foreground">
-            Page {currentPage + 1} of {mockPages.length}
+            {currentPage + 1} / {mockPages.length}
           </span>
         </div>
       </div>
 
       {/* Body */}
       <div className="flex-1 flex overflow-hidden">
-        {/* Main Content */}
-        <div className="flex-1 overflow-y-auto p-8">
-          <div className="max-w-4xl mx-auto">
-            <Card className="mb-6">
-              <CardContent className="p-8">
-                <h3 className="text-2xl font-bold text-foreground mb-4">
-                  {page.title}
-                </h3>
-                <p className="text-foreground leading-relaxed mb-8">
-                  {page.content}
-                </p>
-
-                {/* Resources */}
-                <div className="space-y-4">
-                  <h4 className="text-lg font-semibold text-foreground">
-                    Learning Resources
-                  </h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {page.resources.map((resource) => (
-                      <Card
-                        key={resource.id}
-                        className="cursor-pointer hover:shadow-md hover:border-primary transition-all"
-                        onClick={() => setSelectedResource(resource)}
-                      >
-                        <CardContent className="p-4 flex items-center gap-3">
-                          {resource.type === "video" ? (
-                            <Video className="w-5 h-5 text-primary" />
-                          ) : (
-                            <FileText className="w-5 h-5 text-secondary" />
-                          )}
-                          <div>
-                            <p className="font-medium text-foreground">
-                              {resource.title}
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                              Click to preview
-                            </p>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
+        {/* Main Content - Book View */}
+        <div className="flex-1 overflow-y-auto bg-muted/30">
+          <div className="max-w-5xl mx-auto p-12">
+            {/* Book Page Container */}
+            <div className="bg-card shadow-2xl rounded-lg min-h-[600px] p-12 border border-border">
+              {/* Chapter and Title */}
+              <div className="flex items-start gap-8 mb-8">
+                <div className="flex-shrink-0 w-48 border-2 border-primary/20 p-6 rounded-lg bg-primary/5">
+                  <h3 className="text-4xl font-bold text-primary mb-2">
+                    Chapter
+                  </h3>
+                  <div className="text-6xl font-bold text-primary">
+                    {currentPage + 1}
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+                <div className="flex-1">
+                  <h2 className="text-3xl font-bold text-foreground mb-6 border-b-2 border-primary pb-2">
+                    {page.title}
+                  </h2>
+                </div>
+              </div>
 
-            {/* Resource Viewer */}
-            {selectedResource && (
-              <ResourceViewer
-                resource={selectedResource}
-                onClose={() => setSelectedResource(null)}
-              />
-            )}
+              {/* Content */}
+              <div className="prose prose-lg max-w-none">
+                <div className="text-foreground leading-relaxed whitespace-pre-line text-justify">
+                  {page.content}
+                </div>
+              </div>
+
+              {/* Page Number */}
+              <div className="mt-12 pt-6 border-t border-border flex justify-center">
+                <span className="text-sm text-muted-foreground font-medium">
+                  {currentPage + 1}/{mockPages.length}
+                </span>
+              </div>
+            </div>
 
             {/* Navigation */}
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center mt-8">
               <Button
                 onClick={() => setCurrentPage(Math.max(0, currentPage - 1))}
                 disabled={currentPage === 0}
+                size="lg"
                 className="flex items-center gap-2"
               >
-                <ChevronLeft className="w-4 h-4" />
-                Previous
-              </Button>
-              <Button
-                onClick={() => setRightPanelOpen(!rightPanelOpen)}
-                variant="outline"
-              >
-                {rightPanelOpen ? "Hide" : "Show"} Lesson Plans & Assessments
+                <ChevronLeft className="w-5 h-5" />
+                Previous Page
               </Button>
               <Button
                 onClick={() =>
                   setCurrentPage(Math.min(mockPages.length - 1, currentPage + 1))
                 }
                 disabled={currentPage === mockPages.length - 1}
+                size="lg"
                 className="flex items-center gap-2"
               >
-                Next
-                <ChevronRight className="w-4 h-4" />
+                Next Page
+                <ChevronRight className="w-5 h-5" />
               </Button>
             </div>
           </div>
         </div>
 
-        {/* Right Panel */}
-        {rightPanelOpen && (
-          <div className="w-80 bg-card border-l border-border overflow-y-auto p-6">
-            <Tabs defaultValue="lesson-plans">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="lesson-plans">Lesson Plans</TabsTrigger>
-                <TabsTrigger value="assessments">Assessments</TabsTrigger>
-              </TabsList>
-
-              <TabsContent value="lesson-plans" className="space-y-3 mt-4">
-                {mockLessonPlans.map((plan) => (
+        {/* Right Panel - Learning Resources */}
+        {showResources && (
+          <div className="w-96 bg-card border-l border-border overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-bold text-foreground">Learning Resources</h3>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setShowResources(false)}
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+              
+              <div className="space-y-3">
+                {page.resources.map((resource) => (
                   <Card
-                    key={plan.id}
+                    key={resource.id}
                     className="cursor-pointer hover:shadow-md hover:border-primary transition-all"
-                    onClick={() =>
-                      setSelectedResource({ ...plan, type: "pdf" })
-                    }
+                    onClick={() => setSelectedResource(resource)}
                   >
                     <CardContent className="p-4 flex items-center gap-3">
-                      <FileText className="w-5 h-5 text-secondary" />
-                      <p className="text-sm font-medium text-foreground">
-                        {plan.title}
-                      </p>
+                      {resource.type === "video" ? (
+                        <Video className="w-5 h-5 text-primary" />
+                      ) : (
+                        <FileText className="w-5 h-5 text-secondary" />
+                      )}
+                      <div>
+                        <p className="font-medium text-foreground text-sm">
+                          {resource.title}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          Click to preview
+                        </p>
+                      </div>
                     </CardContent>
                   </Card>
                 ))}
-              </TabsContent>
+              </div>
+            </div>
+          </div>
+        )}
 
-              <TabsContent value="assessments" className="space-y-3 mt-4">
-                {mockAssessments.map((assessment) => (
-                  <Card
-                    key={assessment.id}
-                    className="cursor-pointer hover:shadow-md hover:border-primary transition-all"
-                    onClick={() =>
-                      setSelectedResource({ ...assessment, type: "pdf" })
-                    }
-                  >
-                    <CardContent className="p-4 flex items-center gap-3">
-                      <FileText className="w-5 h-5 text-secondary" />
-                      <p className="text-sm font-medium text-foreground">
-                        {assessment.title}
-                      </p>
-                    </CardContent>
-                  </Card>
-                ))}
-              </TabsContent>
-            </Tabs>
+        {/* Right Panel - Lesson Plans & Assessments */}
+        {showLessonPlans && (
+          <div className="w-96 bg-card border-l border-border overflow-y-auto">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-bold text-foreground">Resources</h3>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setShowLessonPlans(false)}
+                >
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+
+              <Tabs defaultValue="lesson-plans">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="lesson-plans">Lesson Plans</TabsTrigger>
+                  <TabsTrigger value="assessments">Assessments</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="lesson-plans" className="space-y-3 mt-4">
+                  {mockLessonPlans.map((plan) => (
+                    <Card
+                      key={plan.id}
+                      className="cursor-pointer hover:shadow-md hover:border-primary transition-all"
+                      onClick={() =>
+                        setSelectedResource({ ...plan, type: "pdf" })
+                      }
+                    >
+                      <CardContent className="p-4 flex items-center gap-3">
+                        <FileText className="w-5 h-5 text-secondary" />
+                        <p className="text-sm font-medium text-foreground">
+                          {plan.title}
+                        </p>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </TabsContent>
+
+                <TabsContent value="assessments" className="space-y-3 mt-4">
+                  {mockAssessments.map((assessment) => (
+                    <Card
+                      key={assessment.id}
+                      className="cursor-pointer hover:shadow-md hover:border-primary transition-all"
+                      onClick={() =>
+                        setSelectedResource({ ...assessment, type: "pdf" })
+                      }
+                    >
+                      <CardContent className="p-4 flex items-center gap-3">
+                        <FileText className="w-5 h-5 text-secondary" />
+                        <p className="text-sm font-medium text-foreground">
+                          {assessment.title}
+                        </p>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </TabsContent>
+              </Tabs>
+            </div>
           </div>
         )}
       </div>
+
+      {/* Resource Viewer Modal */}
+      {selectedResource && (
+        <div className="fixed inset-0 bg-background/95 z-50 flex items-center justify-center p-8">
+          <div className="w-full max-w-5xl max-h-[90vh] overflow-y-auto">
+            <ResourceViewer
+              resource={selectedResource}
+              onClose={() => setSelectedResource(null)}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
