@@ -21,6 +21,11 @@ const mockPages = [
 He didn't say any more, but we've always been unusually communicative in a reserved way, and I understood that he meant a great deal more than that. In consequence, I'm inclined to reserve all judgements, a habit that has opened up many curious natures to me and also made me the victim of not a few veteran bores. The abnormal mind is quick to detect and attach itself to this quality when it appears in a normal person, and so it came about that in college I was unjustly accused of being a politician, because I was privy to the secret griefs of wild, unknown men.
 
 Most of the confidences were unsought — frequently I have feigned sleep, preoccupation, or a hostile levity when I realized by some unmistakable sign that an intimate revelation was quivering on the horizon; for the intimate revelations of young men, or at least the terms in which they express them, are usually plagiaristic and marred by obvious suppressions.`,
+    annotations: [
+      { id: 'a1', type: 'video', title: 'Introduction to Chapter 1', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', position: 280 },
+      { id: 'a2', type: 'pdf', title: 'Reference Material', url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf', position: 520 },
+      { id: 'a3', type: 'video', title: 'Detailed Explanation', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', position: 780 },
+    ],
     resources: [
       { id: 1, type: "video", title: "Introduction Video", url: "https://www.youtube.com/embed/dQw4w9WgXcQ" },
       { id: 2, type: "pdf", title: "Chapter Overview", url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" },
@@ -36,6 +41,10 @@ The foundation of knowledge begins with understanding basic terminology and conc
 As we delve deeper into the subject matter, you'll discover how these concepts interconnect and support one another. This interconnected web of knowledge forms the basis of expertise in this domain.
 
 Practice and application are key to truly grasping these concepts. Theory alone is insufficient; you must engage with the material actively to develop true understanding and competence.`,
+    annotations: [
+      { id: 'a4', type: 'pdf', title: 'Core Concepts Guide', url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf', position: 180 },
+      { id: 'a5', type: 'video', title: 'Visual Learning Aid', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', position: 360 },
+    ],
     resources: [
       { id: 3, type: "video", title: "Core Concepts Explained", url: "https://www.youtube.com/embed/dQw4w9WgXcQ" },
     ],
@@ -50,6 +59,11 @@ Advanced learners will find these topics particularly engaging as they push the 
 Real-world applications of these advanced concepts demonstrate their practical value. You'll see how theory translates into practice in professional settings.
 
 Critical thinking and analysis become paramount at this level. You're encouraged to question, explore, and develop your own insights as you progress through this material.`,
+    annotations: [
+      { id: 'a6', type: 'video', title: 'Advanced Tutorial', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', position: 200 },
+      { id: 'a7', type: 'pdf', title: 'Advanced Reading Material', url: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf', position: 450 },
+      { id: 'a8', type: 'video', title: 'Case Study Examples', url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', position: 650 },
+    ],
     resources: [
       { id: 4, type: "pdf", title: "Advanced Reading", url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" },
     ],
@@ -73,6 +87,61 @@ const BookReader = ({ subject, onClose }: BookReaderProps) => {
   const [showLessonPlans, setShowLessonPlans] = useState(false);
 
   const page = mockPages[currentPage];
+
+  // Function to render content with annotations
+  const renderContentWithAnnotations = () => {
+    const content = page.content;
+    const annotations = page.annotations || [];
+    
+    if (annotations.length === 0) {
+      return <div className="text-foreground leading-relaxed whitespace-pre-line text-justify">{content}</div>;
+    }
+
+    // Sort annotations by position
+    const sortedAnnotations = [...annotations].sort((a, b) => a.position - b.position);
+    
+    const parts = [];
+    let lastIndex = 0;
+
+    sortedAnnotations.forEach((annotation, idx) => {
+      // Add text before annotation
+      parts.push(
+        <span key={`text-${idx}`}>
+          {content.substring(lastIndex, annotation.position)}
+        </span>
+      );
+
+      // Add annotation icon
+      parts.push(
+        <button
+          key={`annotation-${annotation.id}`}
+          onClick={() => setSelectedResource(annotation)}
+          className="inline-flex items-center justify-center w-6 h-6 mx-1 rounded-full bg-primary/10 hover:bg-primary/20 transition-colors group relative"
+          title={annotation.title}
+        >
+          {annotation.type === 'video' ? (
+            <Video className="w-3.5 h-3.5 text-primary" />
+          ) : (
+            <FileText className="w-3.5 h-3.5 text-secondary" />
+          )}
+          <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-popover text-popover-foreground text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-md">
+            {annotation.title}
+          </span>
+        </button>
+      );
+
+      lastIndex = annotation.position;
+    });
+
+    // Add remaining text
+    parts.push(
+      <span key="text-end">
+        {content.substring(lastIndex)}
+      </span>
+    );
+
+    return <div className="text-foreground leading-relaxed text-justify">{parts}</div>;
+  };
 
   return (
     <div className="fixed inset-0 bg-background z-50 flex flex-col">
@@ -149,9 +218,7 @@ const BookReader = ({ subject, onClose }: BookReaderProps) => {
 
               {/* Content */}
               <div className="prose prose-lg max-w-none">
-                <div className="text-foreground leading-relaxed whitespace-pre-line text-justify">
-                  {page.content}
-                </div>
+                {renderContentWithAnnotations()}
               </div>
 
               {/* Page Number */}
