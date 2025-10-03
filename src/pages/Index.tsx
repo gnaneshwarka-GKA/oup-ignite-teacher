@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Beaker, Calculator, BookA, Languages } from "lucide-react";
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
 import SubjectCard from "@/components/SubjectCard";
@@ -11,6 +10,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import scienceImg from "@/assets/science-subject.png";
+import mathImg from "@/assets/mathematics-subject.png";
+import englishImg from "@/assets/english-subject.png";
+import hindiImg from "@/assets/hindi-subject.png";
 
 const classes = [
   { id: "class-6", name: "Class 6" },
@@ -21,10 +24,10 @@ const classes = [
 ];
 
 const subjects = [
-  { id: "science", title: "Science", icon: Beaker, color: "bg-blue-500" },
-  { id: "mathematics", title: "Mathematics", icon: Calculator, color: "bg-purple-500" },
-  { id: "english", title: "English", icon: BookA, color: "bg-green-500" },
-  { id: "hindi", title: "Hindi", icon: Languages, color: "bg-orange-500" },
+  { id: "science", title: "Science", image: scienceImg, color: "bg-blue-500" },
+  { id: "mathematics", title: "Mathematics", image: mathImg, color: "bg-purple-500" },
+  { id: "english", title: "English", image: englishImg, color: "bg-green-500" },
+  { id: "hindi", title: "Hindi", image: hindiImg, color: "bg-orange-500" },
 ];
 
 const Index = () => {
@@ -88,7 +91,7 @@ const Index = () => {
                     <SubjectCard
                       key={subject.id}
                       title={subject.title}
-                      icon={subject.icon}
+                      image={subject.image}
                       color={subject.color}
                       onClick={() => setSelectedSubject(subject.id)}
                     />
