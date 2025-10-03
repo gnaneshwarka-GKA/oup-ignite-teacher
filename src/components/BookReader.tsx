@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import ResourceViewer from "./ResourceViewer";
 
 interface BookReaderProps {
@@ -71,6 +72,36 @@ Critical thinking and analysis become paramount at this level. You're encouraged
   },
 ];
 
+const classes = [
+  { id: "6", name: "Class 6" },
+  { id: "7", name: "Class 7" },
+  { id: "8", name: "Class 8" },
+  { id: "9", name: "Class 9" },
+  { id: "10", name: "Class 10" },
+];
+
+const chapters = [
+  { id: 1, name: "Locating Places on the Earth" },
+  { id: 2, name: "Oceans and Continents" },
+  { id: 3, name: "Landforms and Life" },
+];
+
+const mockWorksheets = [
+  { id: 1, title: "Worksheet 1", url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf", chapterId: 1 },
+  { id: 2, title: "Worksheet 2", url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf", chapterId: 1 },
+  { id: 3, title: "Worksheet 1", url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf", chapterId: 2 },
+  { id: 4, title: "Worksheet 2", url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf", chapterId: 2 },
+  { id: 5, title: "Worksheet 1", url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf", chapterId: 3 },
+];
+
+const mockAnswerKeys = [
+  { id: 1, title: "Answer Key 1", url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf", chapterId: 1 },
+  { id: 2, title: "Answer Key 2", url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf", chapterId: 1 },
+  { id: 3, title: "Answer Key 1", url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf", chapterId: 2 },
+  { id: 4, title: "Answer Key 2", url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf", chapterId: 2 },
+  { id: 5, title: "Answer Key 1", url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf", chapterId: 3 },
+];
+
 const mockLessonPlans = [
   { id: 1, title: "Week 1 Lesson Plan", url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf", chapterId: 1 },
   { id: 2, title: "Week 2 Lesson Plan", url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf", chapterId: 1 },
@@ -91,6 +122,7 @@ const BookReader = ({ subject, onClose }: BookReaderProps) => {
   const [showResources, setShowResources] = useState(false);
   const [showLessonPlans, setShowLessonPlans] = useState(false);
   const [selectedChapter, setSelectedChapter] = useState<string>("all");
+  const [selectedClass, setSelectedClass] = useState<string>("6");
 
   const page = mockPages[currentPage];
 
@@ -354,63 +386,100 @@ const BookReader = ({ subject, onClose }: BookReaderProps) => {
 
               <div className="mb-4">
                 <label className="text-sm font-medium text-foreground mb-2 block">
-                  Filter by Chapter
+                  Select Class
                 </label>
-                <Select value={selectedChapter} onValueChange={setSelectedChapter}>
+                <Select value={selectedClass} onValueChange={setSelectedClass}>
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select chapter" />
+                    <SelectValue placeholder="Select class" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Chapters</SelectItem>
-                    <SelectItem value="1">Chapter 1</SelectItem>
-                    <SelectItem value="2">Chapter 2</SelectItem>
-                    <SelectItem value="3">Chapter 3</SelectItem>
+                    {classes.map((cls) => (
+                      <SelectItem key={cls.id} value={cls.id}>
+                        {cls.name}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
 
-              <Tabs defaultValue="lesson-plans">
+              <Tabs defaultValue="worksheets" className="mt-6">
                 <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="lesson-plans">Lesson Plans</TabsTrigger>
-                  <TabsTrigger value="assessments">Assessments</TabsTrigger>
+                  <TabsTrigger value="worksheets">Worksheets</TabsTrigger>
+                  <TabsTrigger value="answer-keys">Answer Keys</TabsTrigger>
                 </TabsList>
 
-                <TabsContent value="lesson-plans" className="space-y-3 mt-4">
-                  {filteredLessonPlans.map((plan) => (
-                    <Card
-                      key={plan.id}
-                      className="cursor-pointer hover:shadow-md hover:border-primary transition-all"
-                      onClick={() =>
-                        setSelectedResource({ ...plan, type: "pdf" })
-                      }
-                    >
-                      <CardContent className="p-4 flex items-center gap-3">
-                        <FileText className="w-5 h-5 text-secondary" />
-                        <p className="text-sm font-medium text-foreground">
-                          {plan.title}
-                        </p>
-                      </CardContent>
-                    </Card>
-                  ))}
+                <TabsContent value="worksheets" className="mt-4">
+                  <Accordion type="single" collapsible className="w-full">
+                    {chapters.map((chapter) => {
+                      const chapterWorksheets = mockWorksheets.filter(
+                        (w) => w.chapterId === chapter.id
+                      );
+                      return (
+                        <AccordionItem key={chapter.id} value={`chapter-${chapter.id}`}>
+                          <AccordionTrigger className="text-sm hover:no-underline">
+                            Ch{chapter.id}: {chapter.name}
+                          </AccordionTrigger>
+                          <AccordionContent>
+                            <div className="space-y-2 pl-4">
+                              {chapterWorksheets.map((worksheet) => (
+                                <div
+                                  key={worksheet.id}
+                                  onClick={() =>
+                                    setSelectedResource({ ...worksheet, type: "pdf" })
+                                  }
+                                  className="p-3 rounded-lg hover:bg-muted cursor-pointer transition-colors border border-border"
+                                >
+                                  <div className="flex items-center gap-2">
+                                    <FileText className="w-4 h-4 text-primary" />
+                                    <p className="text-sm text-foreground">
+                                      {worksheet.title}
+                                    </p>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </AccordionContent>
+                        </AccordionItem>
+                      );
+                    })}
+                  </Accordion>
                 </TabsContent>
 
-                <TabsContent value="assessments" className="space-y-3 mt-4">
-                  {filteredAssessments.map((assessment) => (
-                    <Card
-                      key={assessment.id}
-                      className="cursor-pointer hover:shadow-md hover:border-primary transition-all"
-                      onClick={() =>
-                        setSelectedResource({ ...assessment, type: "pdf" })
-                      }
-                    >
-                      <CardContent className="p-4 flex items-center gap-3">
-                        <FileText className="w-5 h-5 text-secondary" />
-                        <p className="text-sm font-medium text-foreground">
-                          {assessment.title}
-                        </p>
-                      </CardContent>
-                    </Card>
-                  ))}
+                <TabsContent value="answer-keys" className="mt-4">
+                  <Accordion type="single" collapsible className="w-full">
+                    {chapters.map((chapter) => {
+                      const chapterAnswerKeys = mockAnswerKeys.filter(
+                        (a) => a.chapterId === chapter.id
+                      );
+                      return (
+                        <AccordionItem key={chapter.id} value={`chapter-${chapter.id}`}>
+                          <AccordionTrigger className="text-sm hover:no-underline">
+                            Ch{chapter.id}: {chapter.name}
+                          </AccordionTrigger>
+                          <AccordionContent>
+                            <div className="space-y-2 pl-4">
+                              {chapterAnswerKeys.map((answerKey) => (
+                                <div
+                                  key={answerKey.id}
+                                  onClick={() =>
+                                    setSelectedResource({ ...answerKey, type: "pdf" })
+                                  }
+                                  className="p-3 rounded-lg hover:bg-muted cursor-pointer transition-colors border border-border"
+                                >
+                                  <div className="flex items-center gap-2">
+                                    <FileText className="w-4 h-4 text-secondary" />
+                                    <p className="text-sm text-foreground">
+                                      {answerKey.title}
+                                    </p>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </AccordionContent>
+                        </AccordionItem>
+                      );
+                    })}
+                  </Accordion>
                 </TabsContent>
               </Tabs>
             </div>
