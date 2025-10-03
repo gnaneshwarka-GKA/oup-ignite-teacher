@@ -3,6 +3,7 @@ import { ChevronLeft, ChevronRight, X, FileText, Video, BookOpen } from "lucide-
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import ResourceViewer from "./ResourceViewer";
 
 interface BookReaderProps {
@@ -71,13 +72,17 @@ Critical thinking and analysis become paramount at this level. You're encouraged
 ];
 
 const mockLessonPlans = [
-  { id: 1, title: "Week 1 Lesson Plan", url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" },
-  { id: 2, title: "Week 2 Lesson Plan", url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" },
+  { id: 1, title: "Week 1 Lesson Plan", url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf", chapterId: 1 },
+  { id: 2, title: "Week 2 Lesson Plan", url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf", chapterId: 1 },
+  { id: 3, title: "Week 3 Lesson Plan", url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf", chapterId: 2 },
+  { id: 4, title: "Week 4 Lesson Plan", url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf", chapterId: 3 },
 ];
 
 const mockAssessments = [
-  { id: 1, title: "Chapter 1 Quiz", url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" },
-  { id: 2, title: "Mid-term Assessment", url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf" },
+  { id: 1, title: "Chapter 1 Quiz", url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf", chapterId: 1 },
+  { id: 2, title: "Chapter 2 Quiz", url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf", chapterId: 2 },
+  { id: 3, title: "Chapter 3 Quiz", url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf", chapterId: 3 },
+  { id: 4, title: "Mid-term Assessment", url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf", chapterId: 1 },
 ];
 
 const BookReader = ({ subject, onClose }: BookReaderProps) => {
@@ -85,8 +90,24 @@ const BookReader = ({ subject, onClose }: BookReaderProps) => {
   const [selectedResource, setSelectedResource] = useState<any>(null);
   const [showResources, setShowResources] = useState(false);
   const [showLessonPlans, setShowLessonPlans] = useState(false);
+  const [selectedChapter, setSelectedChapter] = useState<string>("all");
 
   const page = mockPages[currentPage];
+
+  // Filter resources based on selected chapter
+  const filteredResources = selectedChapter === "all" 
+    ? page.resources 
+    : page.resources.filter(r => r.id === parseInt(selectedChapter));
+
+  // Filter lesson plans based on selected chapter
+  const filteredLessonPlans = selectedChapter === "all"
+    ? mockLessonPlans
+    : mockLessonPlans.filter(plan => plan.chapterId === parseInt(selectedChapter));
+
+  // Filter assessments based on selected chapter
+  const filteredAssessments = selectedChapter === "all"
+    ? mockAssessments
+    : mockAssessments.filter(assessment => assessment.chapterId === parseInt(selectedChapter));
 
   // Function to render content with annotations
   const renderContentWithAnnotations = () => {
@@ -269,9 +290,26 @@ const BookReader = ({ subject, onClose }: BookReaderProps) => {
                   <X className="w-4 h-4" />
                 </Button>
               </div>
+
+              <div className="mb-4">
+                <label className="text-sm font-medium text-foreground mb-2 block">
+                  Filter by Chapter
+                </label>
+                <Select value={selectedChapter} onValueChange={setSelectedChapter}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select chapter" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Chapters</SelectItem>
+                    <SelectItem value="1">Chapter 1</SelectItem>
+                    <SelectItem value="2">Chapter 2</SelectItem>
+                    <SelectItem value="3">Chapter 3</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
               
               <div className="space-y-3">
-                {page.resources.map((resource) => (
+                {filteredResources.map((resource) => (
                   <Card
                     key={resource.id}
                     className="cursor-pointer hover:shadow-md hover:border-primary transition-all"
@@ -314,6 +352,23 @@ const BookReader = ({ subject, onClose }: BookReaderProps) => {
                 </Button>
               </div>
 
+              <div className="mb-4">
+                <label className="text-sm font-medium text-foreground mb-2 block">
+                  Filter by Chapter
+                </label>
+                <Select value={selectedChapter} onValueChange={setSelectedChapter}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select chapter" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Chapters</SelectItem>
+                    <SelectItem value="1">Chapter 1</SelectItem>
+                    <SelectItem value="2">Chapter 2</SelectItem>
+                    <SelectItem value="3">Chapter 3</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
               <Tabs defaultValue="lesson-plans">
                 <TabsList className="grid w-full grid-cols-2">
                   <TabsTrigger value="lesson-plans">Lesson Plans</TabsTrigger>
@@ -321,7 +376,7 @@ const BookReader = ({ subject, onClose }: BookReaderProps) => {
                 </TabsList>
 
                 <TabsContent value="lesson-plans" className="space-y-3 mt-4">
-                  {mockLessonPlans.map((plan) => (
+                  {filteredLessonPlans.map((plan) => (
                     <Card
                       key={plan.id}
                       className="cursor-pointer hover:shadow-md hover:border-primary transition-all"
@@ -340,7 +395,7 @@ const BookReader = ({ subject, onClose }: BookReaderProps) => {
                 </TabsContent>
 
                 <TabsContent value="assessments" className="space-y-3 mt-4">
-                  {mockAssessments.map((assessment) => (
+                  {filteredAssessments.map((assessment) => (
                     <Card
                       key={assessment.id}
                       className="cursor-pointer hover:shadow-md hover:border-primary transition-all"
