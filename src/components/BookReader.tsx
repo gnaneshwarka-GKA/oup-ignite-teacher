@@ -215,6 +215,19 @@ const BookReader = ({ subject, onClose }: BookReaderProps) => {
           </h2>
         </div>
         <div className="flex items-center gap-4">
+          <Select value={selectedChapter} onValueChange={setSelectedChapter}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select chapter" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Chapters</SelectItem>
+              {chapters.map((chapter) => (
+                <SelectItem key={chapter.id} value={chapter.id.toString()}>
+                  Ch{chapter.id}: {chapter.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <Button
             variant="outline"
             size="sm"
