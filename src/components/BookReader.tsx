@@ -338,7 +338,7 @@ const BookReader = ({ subject, onClose }: BookReaderProps) => {
 
               <div className="mb-4">
                 <label className="text-sm font-medium text-foreground mb-2 block">
-                  Filter by Chapter
+                  Filter by Type
                 </label>
                 <Select value={selectedChapter} onValueChange={setSelectedChapter}>
                   <SelectTrigger className="w-full">
