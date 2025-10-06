@@ -16,11 +16,10 @@ import englishImg from "@/assets/english-subject.png";
 import hindiImg from "@/assets/hindi-subject.png";
 
 const classes = [
-  { id: "class-6", name: "Class 6" },
-  { id: "class-7", name: "Class 7" },
-  { id: "class-8", name: "Class 8" },
-  { id: "class-9", name: "Class 9" },
-  { id: "class-10", name: "Class 10" },
+  { id: "class-1", name: "Class 1" },
+  { id: "class-2", name: "Class 2" },
+  { id: "class-3", name: "Class 3" },
+  { id: "class-4", name: "Class 4" },
 ];
 
 const subjects = [
@@ -32,7 +31,7 @@ const subjects = [
 
 const Index = () => {
   const [activeMenu, setActiveMenu] = useState("dashboard");
-  const [selectedClass, setSelectedClass] = useState("class-6");
+  const [selectedClass, setSelectedClass] = useState("class-1");
   const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
 
   if (selectedSubject) {
