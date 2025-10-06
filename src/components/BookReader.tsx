@@ -342,13 +342,13 @@ const BookReader = ({ subject, onClose }: BookReaderProps) => {
                 </label>
                 <Select value={selectedChapter} onValueChange={setSelectedChapter}>
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select chapter" />
+                    <SelectValue placeholder="Select type" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Chapters</SelectItem>
-                    <SelectItem value="1">Chapter 1</SelectItem>
-                    <SelectItem value="2">Chapter 2</SelectItem>
-                    <SelectItem value="3">Chapter 3</SelectItem>
+                    <SelectItem value="all">All</SelectItem>
+                    <SelectItem value="videos">Videos</SelectItem>
+                    <SelectItem value="documents">Documents</SelectItem>
+                    <SelectItem value="interactives">Interactives</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
