@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ChevronLeft, ChevronRight, X, FileText, Video, BookOpen } from "lucide-react";
+import bookCover from "@/assets/math-book-cover.png";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -233,19 +234,24 @@ const BookReader = ({ subject, onClose }: BookReaderProps) => {
                 <Card
                   key={chapter.id}
                   onClick={() => setActiveChapter(chapter.id)}
-                  className="cursor-pointer transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-primary group"
+                  className="cursor-pointer transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-primary group overflow-hidden"
                 >
-                  <CardContent className="p-6">
-                    <div className="flex items-start gap-4">
-                      <div className="w-16 h-16 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/20 transition-colors">
-                        <span className="text-2xl font-bold text-primary">{chapter.id}</span>
+                  <CardContent className="p-0">
+                    <div className="relative">
+                      <img 
+                        src={bookCover} 
+                        alt={`${subject} Book Cover`}
+                        className="w-full h-48 object-cover"
+                      />
+                      <div className="absolute top-2 left-2 w-12 h-12 rounded-lg bg-primary/90 flex items-center justify-center">
+                        <span className="text-xl font-bold text-primary-foreground">{chapter.id}</span>
                       </div>
-                      <div className="flex-1">
-                        <h3 className="text-lg font-semibold text-foreground mb-2">
-                          {chapter.name}
-                        </h3>
-                        <p className="text-sm text-muted-foreground">Click to read</p>
-                      </div>
+                    </div>
+                    <div className="p-4">
+                      <h3 className="text-lg font-semibold text-foreground mb-1">
+                        {chapter.name}
+                      </h3>
+                      <p className="text-sm text-muted-foreground">Click to read</p>
                     </div>
                   </CardContent>
                 </Card>
