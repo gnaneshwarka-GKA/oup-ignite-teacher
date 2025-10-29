@@ -127,6 +127,7 @@ const BookReader = ({ subject, onClose }: BookReaderProps) => {
   const [showResources, setShowResources] = useState(false);
   const [showLessonPlans, setShowLessonPlans] = useState(false);
   const [selectedChapter, setSelectedChapter] = useState<string>("all");
+  const [activeChapter, setActiveChapter] = useState<number | null>(null);
   
 
   const page = mockPages[currentPage];
@@ -201,6 +202,61 @@ const BookReader = ({ subject, onClose }: BookReaderProps) => {
     return <div className="text-foreground leading-relaxed text-justify">{parts}</div>;
   };
 
+  // Chapter tiles view
+  if (activeChapter === null) {
+    return (
+      <div className="fixed inset-0 bg-background z-50 flex flex-col">
+        {/* Header */}
+        <div className="h-16 bg-card border-b border-border flex items-center justify-between px-6">
+          <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onClose}
+              className="hover:bg-muted"
+            >
+              <X className="w-5 h-5" />
+            </Button>
+            <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
+              <BookOpen className="w-5 h-5" />
+              {subject} - Book
+            </h2>
+          </div>
+        </div>
+
+        {/* Chapter Tiles */}
+        <div className="flex-1 overflow-y-auto bg-muted/30">
+          <div className="max-w-6xl mx-auto p-12">
+            <h2 className="text-3xl font-bold text-foreground mb-8">Select a Chapter</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {chapters.map((chapter) => (
+                <Card
+                  key={chapter.id}
+                  onClick={() => setActiveChapter(chapter.id)}
+                  className="cursor-pointer transition-all duration-300 hover:shadow-lg hover:-translate-y-1 hover:border-primary group"
+                >
+                  <CardContent className="p-6">
+                    <div className="flex items-start gap-4">
+                      <div className="w-16 h-16 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/20 transition-colors">
+                        <span className="text-2xl font-bold text-primary">{chapter.id}</span>
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-lg font-semibold text-foreground mb-2">
+                          {chapter.name}
+                        </h3>
+                        <p className="text-sm text-muted-foreground">Click to read</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="fixed inset-0 bg-background z-50 flex flex-col">
       {/* Header */}
@@ -209,14 +265,14 @@ const BookReader = ({ subject, onClose }: BookReaderProps) => {
           <Button
             variant="ghost"
             size="icon"
-            onClick={onClose}
+            onClick={() => setActiveChapter(null)}
             className="hover:bg-muted"
           >
-            <X className="w-5 h-5" />
+            <ChevronLeft className="w-5 h-5" />
           </Button>
           <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
             <BookOpen className="w-5 h-5" />
-            {subject} - Book
+            {subject} - {chapters.find(c => c.id === activeChapter)?.name}
           </h2>
         </div>
         <div className="flex items-center gap-4">
