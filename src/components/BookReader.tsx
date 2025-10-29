@@ -229,7 +229,7 @@ const BookReader = ({ subject, onClose }: BookReaderProps) => {
         <div className="flex-1 overflow-y-auto bg-muted/30">
           <div className="max-w-6xl mx-auto p-12">
             <h2 className="text-3xl font-bold text-foreground mb-8">Select a Chapter</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {chapters.map((chapter) => (
                 <Card
                   key={chapter.id}
